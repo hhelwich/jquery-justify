@@ -12,7 +12,7 @@ In your web page:
 
 ```html
 <script src="jquery.js"></script>
-<script src="dist/jquery-justify.min.js"></script>
+<script src="jquery-justify.min.js"></script>
 <script>
 jQuery(function($) {
   $.justify(); // "justify"
