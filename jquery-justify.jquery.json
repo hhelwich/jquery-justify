@@ -1,0 +1,28 @@
+{
+    "name":"jquery-justify",
+    "title":"jQuery Justify",
+    "description":"jQuery plugin to auto align HTML elements",
+    "version":"0.1.0-SNAPSHOT",
+    "homepage":"https://github.com/hhelwich/jquery-justify",
+    "author":{
+        "name":"Hendrik Helwich",
+        "email":"hendrik@helwich.de"
+    },
+    "repository":{
+        "type":"git",
+        "url":"git://github.com/hhelwich/jquery-justify.git"
+    },
+    "bugs":{
+        "url":"https://github.com/hhelwich/jquery-justify/issues"
+    },
+    "licenses":[
+        {
+            "type":"MIT",
+            "url":"https://github.com/hhelwich/jquery-justify/blob/master/LICENSE-MIT"
+        }
+    ],
+    "dependencies":{
+        "jquery":"*"
+    },
+    "keywords":[]
+}
