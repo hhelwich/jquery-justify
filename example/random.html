@@ -4,12 +4,6 @@
     <title></title>
     <script src="../libs/jquery/jquery.js"></script>
     <script src="../dist/jquery-justify.min.js"></script>
-    <style type="text/css">
-        .block {
-            position: absolute;
-            text-align:center;
-        }
-    </style>
 </head>
 <body>
 <div id="lineuphere">
@@ -17,21 +11,25 @@
 </div>
 
 <script>
-    var getRandomColor = function () {
-        var hexChars = '0123456789ABCDEF',
-            color = '#',
-            i;
-        for (i = 0; i < 6; i += 1) {
-            color += hexChars.charAt(~~(Math.random() * 16));
-        }
-        return color;
+    'use strict';
+
+    var rand = function (x) {
+        return ~~(Math.random() * x);
     };
+
     $(function () {
-        'use strict';
         var i,
-            div = $('#lineuphere');
+            div = $('#lineuphere'),
+            elem = $('<div/>').css('text-align', 'center');
+
         for (i = 1; i <= 100; i += 1) {
-            div.append('<div class="block" style="height: ' + (150 - ~~((Math.random() * 100)))+'px;width:' + (150 - ~~((Math.random() * 100))) + 'px;background-color: ' + getRandomColor() + ';">' + i + '</div>');
+            div.append(elem.clone().css(
+                {
+                    width: (250 - rand(100)) + 'px',
+                    height: (200 - rand(100)) + 'px',
+                    'background-color': 'rgb(' + rand(256) + ',' + rand(256) + ',' + rand(256) + ')'
+                }
+            ).append(i));
         }
         div.justify();
     });
