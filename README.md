@@ -5,8 +5,8 @@ jQuery plugin to auto justify HTML elements
 ## Getting Started
 Download the [production version][min] or the [development version][max].
 
-[min]: https://raw.github.com/hhelwich/jquery-justify/master/dist/jquery-justify.min.js
-[max]: https://raw.github.com/hhelwich/jquery-justify/master/dist/jquery-justify.js
+[min]: https://raw.github.com/hhelwich/jquery-justify/gh-pages/js/jquery-justify.min.js
+[max]: https://raw.github.com/hhelwich/jquery-justify/master/src/jquery-justify.js
 
 In your web page:
 
