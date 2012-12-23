@@ -18,18 +18,18 @@
                 marginY: 20
             }, options),
             that = this,
-            rowMaxWidth = that.width();
+            rowMaxWidth = that.width(),
+            items = that.children(settings.itemSelector),
+            itemLength = items.length,
+            posStr = 'position';
 
-        this.css({
-            'position': 'relative'
-        });
+        that.css(posStr, 'relative');
+        items.css(posStr, 'absolute');
 
 
         function llll() {
 
-            var rowMaxWidth = that.width(),
-                items = that.children(settings.itemSelector),
-                itemLength = items.length;
+            var rowMaxWidth = that.width();
 
             // returns an array of the indices of the items which are the first in each row if the rows are breaking at
             // the given maximum width. The length of the array is the number of rows which are needed.
@@ -146,6 +146,7 @@
 
         $(window).resize(llll);
 
+        llll();
         llll();
 
         if (rowMaxWidth !== that.width()) { // scrollbar appeared
