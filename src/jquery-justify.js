@@ -12,27 +12,52 @@
     $.fn.justify = function (options) {
 
         // Create some defaults, extending them with any options that were provided
-        var settings = $.extend({
+        var that = this.first(), // only apply on first element of selection
+            settings = $.extend({ // overwrite default settings with given options
                 itemSelector: '',
                 marginX: 20,
-                marginY: 20
+                marginY: 20,
+                onChangeHeight: function (height) {
+                    that.height(height);
+                }
             }, options),
-            that = this,
-            rowMaxWidth = that.width(),
-            items = that.children(settings.itemSelector),
-            itemLength = items.length,
-            posStr = 'position';
+            rowMaxWidth,  // store current width for that var in pixels here
+            items = that.children(settings.itemSelector), // select elements which should be justified
+            itemLength = items.length, // number of elements to be justified
+            posStr = 'position',
+            itemWiths = [],
+            i;
 
-        that.css(posStr, 'relative');
+        if (that.css(posStr) === 'static') {
+            // given parent div is not relevant to absolute positioning of child elements if it has the css position
+            // value 'static' (default), => set postioning of parent div to 'relative'
+            that.css(posStr, 'relative');
+        }
+        // all items should be positioned absolutely (relative to parent div)
         items.css(posStr, 'absolute');
 
+        // assume item width is fixed => store to increase performance
+        itemWiths.length = itemLength; // expand array to needed size (hopefully faster)
+        for (i = 0; i < itemLength; i += 1) { // store width of all items (to increase performance)
+            itemWiths[i] = $(items[i]).width();
+        }
 
-        function llll() {
+        function justify() {
+            var x = that.width();
 
-            var rowMaxWidth = that.width();
+            if (x === rowMaxWidth) { // width has not changed => nothing needs to be done
+                return false;
+            } else {
+                rowMaxWidth = x;
+            }
 
-            // returns an array of the indices of the items which are the first in each row if the rows are breaking at
-            // the given maximum width. The length of the array is the number of rows which are needed.
+            /**
+             * Returns an array of the indices of the items which are the first in each row if the rows are breaking at
+             * the given maximum width. The length of the array is the number of rows which are needed.
+             *
+             * @param maxWidth
+             * @return {Array}
+             */
             function getRowFirstItems(maxWidth) {
                 if (itemLength === 0) {
                     return [];
@@ -42,9 +67,8 @@
                     rowWidth = 0,
                     itemStored = true, // current item index is already stored in the array rowFirstItems
                     itemWidth;
-                for (i = 0; i < itemLength; i += 1) {
-                    itemWidth = $(items[i]).width();
-                    // alert(i+":"+itemWidth);
+                for (i = 0; i < itemLength; i += 1) { // iterate all items
+                    itemWidth = itemWiths[i];
                     rowWidth += itemWidth;
                     if (rowWidth > maxWidth) { // current item breaks max row width => break row
                         if (itemStored) {
@@ -135,23 +159,19 @@
 
             var lineup = createLineUp(items, rowMaxWidth);
 
-            that.height(lineup.height);
+            settings.onChangeHeight(lineup.height);
 
             var idx;
             for (idx = 0; idx < itemLength; idx += 1) {
                 $(items[idx]).css(lineup[idx]);
             }
 
+            return true;
         }
 
-        $(window).resize(llll);
+        $(window).resize(justify);
 
-        llll();
-        llll();
-
-        if (rowMaxWidth !== that.width()) { // scrollbar appeared
-            llll();
-        }
+        while (justify()) {} // do twice if scroll bar appeared
 
         return this;
 
