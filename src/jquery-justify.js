@@ -134,8 +134,8 @@
             function createLineUp(items, maxWidth) {
                 var firstRows = getRowFirstItemsOptimized(maxWidth),
                     row,
-                    col = 0,
-                    idx = 0,
+                    col,
+                    idx,
                     nextRowFirstIdx,
                     rowWidth = 0,
                     maxHeight = 0,
@@ -148,34 +148,35 @@
 
                 lineup.length = itemLength; // expand array with undefined elements to known length (performance)
 
-                for (row = 0; row < rowLength; row += 1) { // iterate rows
+                for (row = 0, idx = 0; row < rowLength; row += 1) { // iterate rows
                     nextRowFirstIdx = firstRows[row + 1];
                     if (nextRowFirstIdx === undefined) {
                         nextRowFirstIdx = itemLength;
                     }
-                    for (; idx < nextRowFirstIdx; idx += 1, col += 1) { // iterate row elements
+                    for (col = 0; idx < nextRowFirstIdx; idx += 1, col += 1) { // iterate row elements
+                        // maxHeight: maximum height of all items in current row (type int)
                         maxHeight = Math.max(itemInfo[idx].height, maxHeight);
+                        // rowWith: summed width of all items in current row (type int)
                         rowWidth += itemInfo[idx].width;
                     }
+                    // calculate marginX value for current row to stretch the row to the container width (type float)
                     rowMarginX = ((rowMaxWidth - rowWidth) / (col - 1));
 
                     left = 0;
-                    for (idx = firstRows[row]; idx < nextRowFirstIdx; idx += 1, col += 1) { // re-iterate row elements
+                    for (idx = firstRows[row]; idx < nextRowFirstIdx; idx += 1) { // re-iterate row elements
                         top = height + ~~((maxHeight - itemInfo[idx].height) / 2);
                         lineup[idx] = {
                             'top': top + 'px',
-                            'left': ~~(left) + 'px'
+                            'left': ~~left + 'px'
                         };
                         left += itemInfo[idx].width + rowMarginX;
                     }
 
                     height += maxHeight + settings.marginY;
                     rowWidth = 0;
-                    col = 0;
                     maxHeight = 0;
                 }
                 lineup.height = height - settings.marginY;
-                idx = 0;
                 return lineup;
 
             }
