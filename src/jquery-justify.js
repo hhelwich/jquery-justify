@@ -19,7 +19,8 @@
                 marginY: 20,
                 onChangeHeight: function (height) {
                     that.height(height);
-                }
+                },
+                accuracy: 10
             }, options),
             rowMaxWidth,  // store current width for that var in pixels here
             items = that.children(settings.itemSelector), // select elements which should be justified
@@ -85,16 +86,22 @@
                 return rowFirstItems;
             }
 
-            // binary search for row breaks for the rowMaxWidth and with the same number of rows as
-            // getRowFirstItems but with a more even sectioning of the items
+            /**
+             * Returns an array of the same semantic and length as getRowFirstItems() but the items are sectioned in
+             * an optimized way.
+             * The optimization tries to arrange the items in a more even way (uses binary search to come to a result
+             * fast)
+             *
+             * @param maxWidth
+             * @return {Array}
+             */
             function getRowFirstItemsOptimized(maxWidth) {
-                var DEPTH = 8,
-                    dif = maxWidth,
+                var dif = maxWidth,
                     firstBest = getRowFirstItems(maxWidth),
                     firstBestWidth = maxWidth,
                     firstCurrent = firstBest,
                     i;
-                for (i = 0; i < DEPTH; i += 1) {
+                for (i = 0; i < settings.accuracy; i += 1) {
                     dif /= 2;
                     if (firstCurrent.length > firstBest.length) { // needed more rows => increase width
                         maxWidth += dif;
