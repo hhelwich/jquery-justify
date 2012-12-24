@@ -24,9 +24,10 @@
             }, options),
             rowMaxWidth,  // store current width for that var in pixels here
             items = that.children(settings.itemSelector), // select elements which should be justified
+            item,
             itemLength = items.length, // number of elements to be justified
             posStr = 'position',
-            itemWiths = [],
+            itemInfo = [],
             i;
 
         if (that.css(posStr) === 'static') {
@@ -37,11 +38,17 @@
         // all items should be positioned absolutely (relative to parent div)
         items.css(posStr, 'absolute');
 
-        // assume item width is fixed => store to increase performance
-        itemWiths.length = itemLength; // expand array to needed size (hopefully faster)
-        for (i = 0; i < itemLength; i += 1) { // store width of all items (to increase performance)
-            itemWiths[i] = $(items[i]).width();
+        // assume item width/height is fixed => store to increase performance
+        itemInfo.length = itemLength; // expand array to needed size (hopefully faster)
+        for (i = 0; i < itemLength; i += 1) { // store info for all items (to increase performance)
+            item = $(items[i]);
+            itemInfo[i] = {
+                item: item,
+                width: item.width(),
+                height: item.height()
+            };
         }
+        item = undefined; // free for GC
 
         function justify() {
             var x = that.width();
@@ -69,7 +76,7 @@
                     itemStored = true, // current item index is already stored in the array rowFirstItems
                     itemWidth;
                 for (i = 0; i < itemLength; i += 1) { // iterate all items
-                    itemWidth = itemWiths[i];
+                    itemWidth = itemInfo[i].width;
                     rowWidth += itemWidth;
                     if (rowWidth > maxWidth) { // current item breaks max row width => break row
                         if (itemStored) {
@@ -117,6 +124,13 @@
                 return firstBest;
             }
 
+            /**
+             *
+             *
+             * @param items
+             * @param maxWidth
+             * @return {Array}
+             */
             function createLineUp(items, maxWidth) {
                 var firstRows = getRowFirstItemsOptimized(maxWidth),
                     row,
@@ -128,9 +142,11 @@
                     rowMarginX,
                     height = 0,
                     rowLength = firstRows.length,
-                    lineup = new Array(itemLength),
+                    lineup = [],
                     top,
                     left;
+
+                lineup.length = itemLength; // expand array with undefined elements to known length (performance)
 
                 for (row = 0; row < rowLength; row += 1) { // iterate rows
                     nextRowFirstIdx = firstRows[row + 1];
@@ -138,19 +154,19 @@
                         nextRowFirstIdx = itemLength;
                     }
                     for (; idx < nextRowFirstIdx; idx += 1, col += 1) { // iterate row elements
-                        maxHeight = Math.max($(items[idx]).height(), maxHeight);
-                        rowWidth += $(items[idx]).width();
+                        maxHeight = Math.max(itemInfo[idx].height, maxHeight);
+                        rowWidth += itemInfo[idx].width;
                     }
                     rowMarginX = ((rowMaxWidth - rowWidth) / (col - 1));
 
                     left = 0;
                     for (idx = firstRows[row]; idx < nextRowFirstIdx; idx += 1, col += 1) { // re-iterate row elements
-                        top = height + Math.floor((maxHeight - $(items[idx]).height()) / 2);
+                        top = height + ~~((maxHeight - itemInfo[idx].height) / 2);
                         lineup[idx] = {
                             'top': top + 'px',
-                            'left': Math.floor(left) + 'px'
+                            'left': ~~(left) + 'px'
                         };
-                        left += $(items[idx]).width() + rowMarginX;
+                        left += itemInfo[idx].width + rowMarginX;
                     }
 
                     height += maxHeight + settings.marginY;
@@ -170,7 +186,7 @@
 
             var idx;
             for (idx = 0; idx < itemLength; idx += 1) {
-                $(items[idx]).css(lineup[idx]);
+                itemInfo[idx].item.css(lineup[idx]);
             }
 
             return true;
