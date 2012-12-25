@@ -1,39 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/jquery-justify.min.js"></script>
+    <title>Random Boxes</title>
 </head>
 <body>
-<div id="lineuphere">
+<div id="justifyme"></div>
 
-</div>
-
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery-justify.min.js"></script>
 <script>
     'use strict';
 
-    var rand = function (x) {
-        return ~~(Math.random() * x);
-    };
+    var i,
+        container = $('#justifyme'),
+        boxProto = $('<div/>').css('text-align', 'center'),
 
-    $(function () {
-        var i,
-            div = $('#lineuphere'),
-            elem = $('<div/>').css('text-align', 'center');
+        /**
+         * Return a random natural number from [0 .. x-1]
+         *
+         * @param x
+         * @return {Number}
+         */
+        rand = function (x) {
+            return ~~(Math.random() * x);
+        };
 
-        for (i = 1; i <= 100; i += 1) {
-            div.append(elem.clone().css(
-                {
-                    width: (250 - rand(100)) + 'px',
-                    height: (200 - rand(100)) + 'px',
-                    'background-color': 'rgb(' + rand(256) + ',' + rand(256) + ',' + rand(256) + ')'
-                }
-            ).append(i));
-        }
-        div.justify();
-    });
+    // add 100 random sized & colored boxes to the DOM
+    for (i = 1; i <= 100; i += 1) {
+        container.append(boxProto.clone().css(
+            {
+                width: (250 - rand(100)) + 'px',
+                height: (200 - rand(100)) + 'px',
+                'background-color': 'rgb(' + rand(256) + ',' + rand(256) + ',' + rand(256) + ')'
+            }
+        ).append(i));
+    }
 
+    // justify boxes
+    container.justify();
 </script>
 
 </body>
