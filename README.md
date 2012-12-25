@@ -13,9 +13,16 @@ In your web page:
 ```html
 <script src="jquery.js"></script>
 <script src="jquery-justify.min.js"></script>
+
+<div id="imageList">
+    <img src="cat1.jpg" height="75" width="75">
+    <img src="cat2.jpg" height="75" width="75">
+    <img src="cat3.jpg" height="75" width="75">
+</div>
+
 <script>
 jQuery(function($) {
-  $.justify(); // "justify"
+    $('#imageList').justify();
 });
 </script>
 ```
@@ -24,7 +31,9 @@ jQuery(function($) {
 _(Coming soon)_
 
 ## Examples
-_(Coming soon)_
+* [random justified boxes][random]
+
+[random]: http://hhelwich.github.com/jquery-justify/random.html
 
 ## Release History
 _(Nothing yet)_
