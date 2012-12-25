@@ -13,18 +13,17 @@ In your web page:
 ```html
 <script src="jquery.js"></script>
 <script src="jquery-justify.min.js"></script>
+<script>
+jQuery(function($) {
+    $('#imageList').justify();
+});
+</script>
 
 <div id="imageList">
     <img src="cat1.jpg" height="75" width="75">
     <img src="cat2.jpg" height="75" width="75">
     <img src="cat3.jpg" height="75" width="75">
 </div>
-
-<script>
-jQuery(function($) {
-    $('#imageList').justify();
-});
-</script>
 ```
 
 ## Documentation
