@@ -30,7 +30,7 @@
         for (i = 0; i < itemInfo.length; i += 1) { // iterate all items
             itemWidth = itemInfo[i].width;
             rowWidth += itemWidth;
-            if (rowWidth > maxWidth) { // current item breaks max row width => break row
+            if (rowWidth > maxWidth && itemInfo[i].breakBefore !== false) { // current item breaks max row width => break row
                 if (itemStored) {
                     rowWidth = 0;
                 } else {
@@ -142,7 +142,7 @@
         // Create some defaults, extending them with any options that were provided
         var that = this.first(), // only apply on first element of selection
             settings = $.extend({ // overwrite default settings with given options
-                itemSelector: '',
+                itemSelector: '*',
                 marginX: 20,
                 marginY: 20,
                 onChangeHeight: function (height) {
@@ -151,12 +151,14 @@
                 accuracy: 10
             }, options),
             rowMaxWidth,  // store current width for that var in pixels here
-            items = that.children(settings.itemSelector), // select elements which should be justified
+            items = that.find(settings.itemSelector), // select elements which should be justified
             item,
             itemLength = items.length, // number of elements to be justified
             posStr = 'position',
             itemInfo = [],
-            i;
+            i,
+            inBlock = false,
+            dataBlock;
 
         if (that.css(posStr) === 'static') {
             // given parent div is not relevant to absolute positioning of child elements if it has the css position
@@ -173,8 +175,17 @@
             itemInfo[i] = {
                 item: item,
                 width: item.width(),
-                height: item.height()
+                height: item.height(),
+                breakBefore: !inBlock
             };
+            dataBlock = item.attr('data-block');
+            if (dataBlock !== undefined) {
+                if (dataBlock === 'start') {
+                    inBlock = true;
+                } else if (dataBlock === 'end') {
+                    inBlock = false;
+                }
+            }
         }
         item = undefined; // free for GC
 
