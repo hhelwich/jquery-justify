@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bourr&eacute;e - J.S. Bach</title>
+    <link href="bourree.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<div class="song">Bourr&eacute;e</div>
+<div class="artist">J.S. Bach</div>
+
+<div id="tab">
+    <div style="background-image:url(tab_clef.png); background-repeat: repeat-y; height:100%; width:25px; float:left;"></div>
+    <div style="margin-left:25px; height:100%; background-image:url(tab_lines.png); background-repeat:repeat;"></div>
+</div>
+
+<script src="../libs/jquery/jquery.js"></script>
+<script src="../src/jquery-justify.js"></script>
+<script>
+    'use strict';
+
+    $.getJSON('bourree.json', function (data) {
+        var container = $("#tab"),
+            i,
+            j,
+            measure,
+            chordProto = $('<div style="width: 10px;" class="chord"/>'),
+            chord,
+            strings = 6,
+            string;
+
+        for (i = 0; i < data.length; i += 1) {
+            measure = data[i];
+            string = 0;
+            chord = chordProto.clone().attr('data-block', 'start');
+            for (j = 0; j < measure.length; j += 2) {
+                string += measure[j];
+                if (string >= strings) {
+                    container.append(chord);
+                    chord = chordProto.clone();
+                    string %= strings;
+                }
+                chord.append('<div class="note" style="position: absolute; left: 0; top: ' +
+                        (46 + (strings - string - 1) * 9) + 'px;">' + measure[j + 1] + '<\/div>');
+            }
+            container.append(chord);
+            chord = chordProto.clone().attr('data-block', 'end');
+            chord.append('<div class="separator" style="position: absolute; left: 9px; "/>');
+            container.append(chord);
+        }
+
+        container.justify({itemSelector: 'div[class="chord"]', marginX: 5, marginY: 0, marginLeft: 40});
+    });
+</script>
+
+</body>
+</html>

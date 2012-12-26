@@ -1,0 +1,35 @@
+
+.song {
+    color: #000000;
+    font-family: serif;
+    font-size: 2em;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.artist {
+    color: #000000;
+    font-family: serif;
+    font-size: 1em;
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+.chord {
+    height: 150px;
+    position: absolute;
+}
+
+.note {
+    font-family: serif;
+    font-size: 0.7em;
+    background-image: url(tab_x.gif);
+    background-repeat: repeat-x;
+}
+
+.separator {
+    background-color: #000000;
+    width: 1px;
+    height: 46px;
+    top: 52px;
+}
