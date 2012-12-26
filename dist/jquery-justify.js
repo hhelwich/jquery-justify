@@ -1,4 +1,4 @@
-/*! jQuery Justify - v0.1.0-SNAPSHOT - 2012-12-25
+/*! jQuery Justify - v0.1.0-SNAPSHOT - 2012-12-26
 * https://github.com/hhelwich/jquery-justify
 * Copyright (c) 2012 Hendrik Helwich; Licensed MIT */
 
@@ -26,7 +26,7 @@
         for (i = 0; i < itemInfo.length; i += 1) { // iterate all items
             itemWidth = itemInfo[i].width;
             rowWidth += itemWidth;
-            if (rowWidth > maxWidth) { // current item breaks max row width => break row
+            if (rowWidth > maxWidth && itemInfo[i].breakBefore !== false) { // current item breaks max row width => break row
                 if (itemStored) {
                     rowWidth = 0;
                 } else {
@@ -83,7 +83,7 @@
      * @return {Array}
      */
     function createLineUp(itemInfo, maxWidth, settings) {
-        var firstRows = getRowFirstItemsOptimized(itemInfo, maxWidth, settings.marginX, settings.accuracy),
+        var firstRows,
             row,
             col,
             idx,
@@ -91,13 +91,20 @@
             rowWidth = 0,
             maxHeight = 0,
             rowMarginX,
-            height = 0,
-            rowLength = firstRows.length,
+            height,
+            rowLength,
             lineup = [],
             top,
             left;
 
+        maxWidth -= settings.marginLeft + settings.marginRight;
+
+        firstRows = getRowFirstItemsOptimized(itemInfo, maxWidth, settings.marginX, settings.accuracy);
+        rowLength = firstRows.length;
+
         lineup.length = itemInfo.length; // expand array with undefined elements to known length (performance)
+
+        height = settings.marginTop;
 
         for (row = 0, idx = 0; row < rowLength; row += 1) { // iterate rows
             nextRowFirstIdx = firstRows[row + 1];
@@ -113,7 +120,7 @@
             // calculate marginX value for current row to stretch the row to the container width (type float)
             rowMarginX = ((maxWidth - rowWidth) / (col - 1));
 
-            left = 0;
+            left = settings.marginLeft;
             // calculate the position for each item
             for (idx = firstRows[row]; idx < nextRowFirstIdx; idx += 1) { // re-iterate row elements
                 top = height + ~~((maxHeight - itemInfo[idx].height) / 2);
@@ -128,7 +135,7 @@
             rowWidth = 0;
             maxHeight = 0;
         }
-        lineup.height = height - settings.marginY;
+        lineup.height = height - settings.marginY + settings.marginBottom;
         return lineup;
     }
 
@@ -138,21 +145,27 @@
         // Create some defaults, extending them with any options that were provided
         var that = this.first(), // only apply on first element of selection
             settings = $.extend({ // overwrite default settings with given options
-                itemSelector: '',
+                itemSelector: '*',
                 marginX: 20,
                 marginY: 20,
+                marginTop: 0,
+                marginBottom: 0,
+                marginLeft: 0,
+                marginRight: 0,
                 onChangeHeight: function (height) {
                     that.height(height);
                 },
                 accuracy: 10
             }, options),
             rowMaxWidth,  // store current width for that var in pixels here
-            items = that.children(settings.itemSelector), // select elements which should be justified
+            items = that.find(settings.itemSelector), // select elements which should be justified
             item,
             itemLength = items.length, // number of elements to be justified
             posStr = 'position',
             itemInfo = [],
-            i;
+            i,
+            inBlock = false,
+            dataBlock;
 
         if (that.css(posStr) === 'static') {
             // given parent div is not relevant to absolute positioning of child elements if it has the css position
@@ -169,8 +182,17 @@
             itemInfo[i] = {
                 item: item,
                 width: item.width(),
-                height: item.height()
+                height: item.height(),
+                breakBefore: !inBlock
             };
+            dataBlock = item.attr('data-block');
+            if (dataBlock !== undefined) {
+                if (dataBlock === 'start') {
+                    inBlock = true;
+                } else if (dataBlock === 'end') {
+                    inBlock = false;
+                }
+            }
         }
         item = undefined; // free for GC
 
