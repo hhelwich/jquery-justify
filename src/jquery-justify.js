@@ -87,7 +87,7 @@
      * @return {Array}
      */
     function createLineUp(itemInfo, maxWidth, settings) {
-        var firstRows = getRowFirstItemsOptimized(itemInfo, maxWidth, settings.marginX, settings.accuracy),
+        var firstRows,
             row,
             col,
             idx,
@@ -95,13 +95,20 @@
             rowWidth = 0,
             maxHeight = 0,
             rowMarginX,
-            height = 0,
-            rowLength = firstRows.length,
+            height,
+            rowLength,
             lineup = [],
             top,
             left;
 
+        maxWidth -= settings.marginLeft + settings.marginRight;
+
+        firstRows = getRowFirstItemsOptimized(itemInfo, maxWidth, settings.marginX, settings.accuracy);
+        rowLength = firstRows.length;
+
         lineup.length = itemInfo.length; // expand array with undefined elements to known length (performance)
+
+        height = settings.marginTop;
 
         for (row = 0, idx = 0; row < rowLength; row += 1) { // iterate rows
             nextRowFirstIdx = firstRows[row + 1];
@@ -117,7 +124,7 @@
             // calculate marginX value for current row to stretch the row to the container width (type float)
             rowMarginX = ((maxWidth - rowWidth) / (col - 1));
 
-            left = 0;
+            left = settings.marginLeft;
             // calculate the position for each item
             for (idx = firstRows[row]; idx < nextRowFirstIdx; idx += 1) { // re-iterate row elements
                 top = height + ~~((maxHeight - itemInfo[idx].height) / 2);
@@ -132,7 +139,7 @@
             rowWidth = 0;
             maxHeight = 0;
         }
-        lineup.height = height - settings.marginY;
+        lineup.height = height - settings.marginY + settings.marginBottom;
         return lineup;
     }
 
@@ -145,6 +152,10 @@
                 itemSelector: '*',
                 marginX: 20,
                 marginY: 20,
+                marginTop: 0,
+                marginBottom: 0,
+                marginLeft: 0,
+                marginRight: 0,
                 onChangeHeight: function (height) {
                     that.height(height);
                 },
