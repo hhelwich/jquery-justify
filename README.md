@@ -31,8 +31,10 @@ _(Coming soon)_
 
 ## Examples
 * [random justified boxes][random]
+* [simple tablature][bourree]
 
 [random]: http://hhelwich.github.com/jquery-justify/random.html
+[bourree]: http://hhelwich.github.com/jquery-justify/bourree.html
 
 ## Release History
 _(Nothing yet)_
