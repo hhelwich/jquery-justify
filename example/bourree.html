@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Bourr&eacute;e - J.S. Bach</title>
-    <link href="bourree.css" rel="stylesheet" type="text/css">
+    <link href="css/bourree.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -11,8 +11,8 @@
 <div class="artist">J.S. Bach</div>
 
 <div id="tab">
-    <div style="background-image:url(tab_clef.png); background-repeat: repeat-y; height:100%; width:25px; float:left;"></div>
-    <div style="margin-left:25px; height:100%; background-image:url(tab_lines.png); background-repeat:repeat;"></div>
+    <div style="background-image:url(images/tab_clef.png); background-repeat: repeat-y; height:100%; width:25px; float:left;"></div>
+    <div style="margin-left:25px; height:100%; background-image:url(images/tab_lines.png); background-repeat:repeat;"></div>
 </div>
 
 <script src="../libs/jquery/jquery.js"></script>
@@ -20,7 +20,7 @@
 <script>
     'use strict';
 
-    $.getJSON('bourree.json', function (data) {
+    $.getJSON('js/bourree.json', function (data) {
         var container = $("#tab"),
             i,
             j,
