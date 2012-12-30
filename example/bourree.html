@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bourr&eacute;e - J.S. Bach</title>
+    <title>Tablature</title>
     <link href="css/bourree.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
 
-<div class="song">Bourr&eacute;e</div>
-<div class="artist">J.S. Bach</div>
+<div class="title"></div>
+<div class="artist"></div>
 
 <div id="tab">
-    <div style="background-image:url(images/tab_clef.png); background-repeat: repeat-y; height:100%; width:25px; float:left;"></div>
-    <div style="margin-left:25px; height:100%; background-image:url(images/tab_lines.png); background-repeat:repeat;"></div>
+    <div style="background:url(images/tab_clef.png) repeat-y; height:100%; width:25px; float:left;"></div>
+    <div style="margin-left:25px; height:100%; background:url(images/tab_lines.png) repeat;"></div>
 </div>
 
 <script src="../libs/jquery/jquery.js"></script>
@@ -24,30 +24,39 @@
         var container = $("#tab"),
             i,
             j,
-            measure,
+            k,
+            bar,
             chordProto = $('<div style="width: 10px;" class="chord"/>'),
             chord,
             strings = 6,
-            string;
+            string,
+            fret,
+            chordDiv;
 
-        for (i = 0; i < data.length; i += 1) {
-            measure = data[i];
-            string = 0;
-            chord = chordProto.clone().attr('data-block', 'start');
-            for (j = 0; j < measure.length; j += 2) {
-                string += measure[j];
-                if (string >= strings) {
-                    container.append(chord);
-                    chord = chordProto.clone();
-                    string %= strings;
+        $('div[class="title"]').text(data.title);
+        $('div[class="artist"]').text(data.artist);
+        document.title = data.title + ' - ' + data.artist;
+        data = data.bars;
+
+        for (i = 0; i < data.length; i += 1) { // iterate bars
+            bar = data[i];
+            for (j = 0; j < bar.length; j += 2) { // iterate chords in bar
+                chord = bar[j];
+                chordDiv = chordProto.clone();
+                if (j === 0) {
+                    chordDiv.attr('data-block', 'start');
                 }
-                chord.append('<div class="note" style="position: absolute; left: 0; top: ' +
-                        (46 + (strings - string - 1) * 9) + 'px;">' + measure[j + 1] + '<\/div>');
+                for (k = 0; k < chord.length; k += 2) { // iterate chord notes
+                    string = chord[k];
+                    fret = chord[k + 1];
+                    chordDiv.append('<div class="note" style="position: absolute; left: 0; top: ' +
+                            (46 + (strings - string - 1) * 9) + 'px;">' + fret + '<\/div>');
+                }
+                container.append(chordDiv);
             }
-            container.append(chord);
-            chord = chordProto.clone().attr('data-block', 'end');
-            chord.append('<div class="separator" style="position: absolute; left: 9px; "/>');
-            container.append(chord);
+            chordDiv = chordProto.clone().attr('data-block', 'end');
+            chordDiv.append('<div class="separator" style="position: absolute; left: 9px; "/>');
+            container.append(chordDiv);
         }
 
         container.justify({itemSelector: 'div[class="chord"]', marginX: 5, marginY: 0, marginLeft: 40});
