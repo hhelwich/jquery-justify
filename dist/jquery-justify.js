@@ -1,4 +1,4 @@
-/*! jQuery Justify - v0.1.0-SNAPSHOT - 2012-12-26
+/*! jQuery Justify - v0.1.0-SNAPSHOT - 2012-12-31
 * https://github.com/hhelwich/jquery-justify
 * Copyright (c) 2012 Hendrik Helwich; Licensed MIT */
 
@@ -125,10 +125,15 @@
             for (idx = firstRows[row]; idx < nextRowFirstIdx; idx += 1) { // re-iterate row elements
                 top = height + ~~((maxHeight - itemInfo[idx].height) / 2);
                 lineup[idx] = {
-                    'top': top + 'px',
-                    'left': ~~left + 'px'
+                    top: top + 'px',
+                    left: ~~left + 'px'
                 };
                 left += itemInfo[idx].width + rowMarginX;
+            }
+            // sometimes it comes to a round-off error with many elements in line so that the last element in line is
+            // moved by a pixel => additionally calculate exact position for last element
+            if (col > 1) {
+                lineup[idx - 1].left = maxWidth - itemInfo[idx - 1].width + settings.marginLeft;
             }
 
             height += maxHeight + settings.marginY;
